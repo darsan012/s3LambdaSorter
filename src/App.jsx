@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useDropzone } from "react-dropzone";
+import {s3Client, PutObjectCommand} from "./config/aws.js"
 
 const App = () => {
   const [fileName, setFileName] = useState("");
@@ -10,17 +11,33 @@ const App = () => {
   const handleSort = () => {
   };
 
-  // Handle file drop
-  const onDrop = (acceptedFiles) => {
+  // Handle file drop, after file is dropped it will be uploaded to s3 bucket 1
+  const onDrop = async (acceptedFiles) => {
     const file = acceptedFiles[0];
     // validate input file extension
     if (!file || file.type !== "text/plain") {
       setUploadMessage("Only .txt files are allowed!");
       return;
     }
-    console.log(file);
-    setFileName(file.name);
 
+    const params =  {
+      Bucket: import.meta.env.VITE_S3_BUCKET1_NAME,
+      Key: file.name,
+      Body: file,
+      ContentType: file.type
+    }
+
+    // upload to s3 bucket
+    try {
+      const command = new PutObjectCommand(params)
+      console.log({command})
+      const result = await s3Client.send(command);
+      console.log("Upload result:", result);
+      setFileName(file.name);
+      console.log("File Uploaded successfully")
+    } catch (error) {
+      console.error("Error uploading file:", error);
+    }
   };
 
   // Handle delete
@@ -30,7 +47,9 @@ const App = () => {
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop,
-    accept: ".txt",
+    accept: {
+      "text/plain": [".txt"], // MIME type and file extension for .txt files
+    },
   });
 
   return (
