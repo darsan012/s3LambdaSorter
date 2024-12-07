@@ -1,4 +1,4 @@
-import { S3Client, ListObjectsV2Command, PutObjectCommand, DeleteObjectCommand } from "@aws-sdk/client-s3";
+import { S3Client, ListObjectsV2Command, PutObjectCommand, DeleteObjectCommand , GetObjectCommand} from "@aws-sdk/client-s3";
 
 //creating s3 client to connect to aws
 const s3Client = new S3Client({
@@ -14,4 +14,5 @@ export {
     ListObjectsV2Command,
     PutObjectCommand,
     DeleteObjectCommand,
+    GetObjectCommand
   };
