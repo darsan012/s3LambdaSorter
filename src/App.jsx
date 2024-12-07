@@ -66,6 +66,7 @@ const App = () => {
     });
     await s3Client.send(command);
     setFileName("");
+    sortedFileUrl("");
   };
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
